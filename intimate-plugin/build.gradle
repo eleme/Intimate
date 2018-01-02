@@ -1,5 +1,6 @@
 apply plugin: 'groovy'
 apply plugin: 'maven'
+apply plugin: 'com.novoda.bintray-release'
 
 dependencies {
     compile gradleApi()
@@ -20,4 +21,13 @@ uploadArchives {
             repository(url: uri('../repo'))
         }
     }
+}
+
+publish {
+    userOrg = 'zhaoxuan' // 用户所在组织
+    groupId = 'me.ele' // 包名
+    artifactId = 'intimate-plugin' // library的名字
+    publishVersion = '0.0.1' // 版本
+    desc = 'Intimate-plugin' // library描述
+    website = 'https://github.com/ELELogistics/Intimate'
 }

@@ -19,7 +19,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        textView = findViewById(R.id.text);
+        textView = (TextView) findViewById(R.id.text);
 
 //        RefTextView refTextView = RefImplFactory.getRefImpl(textView, RefTextView.class);
 //        refTextView.getText();
