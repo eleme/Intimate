@@ -1,0 +1,1 @@
+include ':app', ':intimate-annotation', ':intimate-lib', ':intimate-compiler', ':intimate-plugin', ':mock-lib', ':mock-lib'
