@@ -6,9 +6,7 @@ import com.squareup.javapoet.TypeSpec;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import javax.lang.model.element.Modifier;
 
@@ -18,6 +16,7 @@ import me.ele.intimate.compiler.model.RefMethodModel;
 import me.ele.intimate.compiler.model.RefTargetModel;
 
 import static me.ele.intimate.compiler.TypeUtil.INTIMATE_PACKAGE;
+import static me.ele.intimate.compiler.TypeUtil.REF_IMPL_FACTORY;
 
 
 /**
@@ -59,13 +58,7 @@ public class GenerateSystemCode {
     }
 
     private void generateFiled(TypeSpec.Builder implClass, List<RefFieldModel> fieldModelList) {
-        Set<String> fieldList = new HashSet<>();
         for (RefFieldModel fieldModel : fieldModelList) {
-            if (!fieldList.contains(fieldModel.getName())) {
-                fieldList.add(fieldModel.getName());
-                implClass.addField(Field.class, fieldModel.getName());
-            }
-
             MethodSpec.Builder methodSpec = MethodSpec.methodBuilder(fieldModel.getMethodName())
                     .addAnnotation(Override.class)
                     .addModifiers(Modifier.PUBLIC);
@@ -75,59 +68,43 @@ public class GenerateSystemCode {
             if (fieldModel.getParameterType() != null) {
                 methodSpec.addParameter(fieldModel.getParameterType().typeName, "arg");
             }
+            methodSpec.returns(fieldModel.getReturnType().typeName);
+            methodSpec.beginControlFlow("try")
+                    .addStatement("$T field = $T.getField($T.class,$S)", Field.class, REF_IMPL_FACTORY, model.getInterfaceName().typeName, fieldModel.getName())
+                    .beginControlFlow("if(field == null)")
+                    .addStatement("field = mClass.getDeclaredField($S)", fieldModel.getName())
+                    .addStatement("field.setAccessible(true)")
+                    .addStatement("$T.putField($T.class,$S,field)", REF_IMPL_FACTORY, model.getInterfaceName().typeName, fieldModel.getName())
+                    .endControlFlow();
             if (fieldModel.isSet()) {
-                methodSpec.returns(fieldModel.getReturnType().typeName);
-                methodSpec.beginControlFlow("try")
-                        .beginControlFlow("if($N == null)", fieldModel.getName())
-                        .addStatement("$N = mClass.getDeclaredField($S)", fieldModel.getName(), fieldModel.getName())
-                        .addStatement("$N.setAccessible(true)", fieldModel.getName())
-                        .endControlFlow()
-                        .addStatement("$N.set(mObject, arg)", fieldModel.getName())
-                        .endControlFlow()
-                        .beginControlFlow("catch (Exception e)");
-                for (CName exception : fieldModel.getThrownTypes()) {
-                    methodSpec.addStatement("if(e instanceof $T) throw ($T)e", exception.typeName, exception.typeName);
-                }
-                methodSpec.addStatement("e.printStackTrace()");
-                methodSpec.endControlFlow();
+                methodSpec.addStatement("field.set(mObject, arg)");
             } else {
-                methodSpec.returns(fieldModel.getType().typeName);
-                methodSpec.beginControlFlow("try")
-                        .beginControlFlow("if($N == null)", fieldModel.getName())
-                        .addStatement("$N = mClass.getDeclaredField($S)", fieldModel.getName(), fieldModel.getName())
-                        .addStatement("$N.setAccessible(true)", fieldModel.getName())                        .endControlFlow()
-                        .addStatement("return($T)$N.get(mObject)", fieldModel.getType().typeName, fieldModel.getName())
-                        .endControlFlow()
-                        .beginControlFlow("catch (Exception e)");
-                for (CName exception : fieldModel.getThrownTypes()) {
-                    methodSpec.addStatement("if(e instanceof $T) throw ($T)e", exception.typeName, exception.typeName);
-                }
-                methodSpec.addStatement("e.printStackTrace()");
-                methodSpec.endControlFlow();
+                methodSpec.addStatement("return($T)field.get(mObject)", fieldModel.getType().typeName);
             }
+            methodSpec.endControlFlow()
+                    .beginControlFlow("catch (Exception e)");
+            for (CName exception : fieldModel.getThrownTypes()) {
+                methodSpec.addStatement("if(e instanceof $T) throw ($T)e", exception.typeName, exception.typeName);
+            }
+            methodSpec.addStatement("e.printStackTrace()");
+            methodSpec.endControlFlow();
             methodSpec.addCode(TypeUtil.typeDefaultReturnCode(fieldModel.getReturnType()));
             implClass.addMethod(methodSpec.build());
         }
     }
 
-    private static void generateMethod(TypeSpec.Builder implClass, List<RefMethodModel> methodModels) {
+    private void generateMethod(TypeSpec.Builder implClass, List<RefMethodModel> methodModels) {
         if (methodModels == null || methodModels.size() == 0) {
             return;
         }
-        Set<String> fieldList = new HashSet<>();
         for (RefMethodModel methodModel : methodModels) {
-            if (!fieldList.contains(methodModel.getName())) {
-                implClass.addField(Method.class, methodModel.getName(), Modifier.STATIC);
-                fieldList.add(methodModel.getName());
-            }
-
             MethodSpec.Builder methodSpec = MethodSpec.methodBuilder(methodModel.getName())
                     .addAnnotation(Override.class)
                     .addModifiers(Modifier.PUBLIC)
                     .returns(methodModel.getReturnType().typeName);
 
-            StringBuilder getMethodCode = new StringBuilder("$N =  mClass.getDeclaredMethod($S");
-            StringBuilder invokeCode = new StringBuilder("$N.invoke(mObject");
+            StringBuilder getMethodCode = new StringBuilder("method =  mClass.getDeclaredMethod($S");
+            StringBuilder invokeCode = new StringBuilder("method.invoke(mObject");
             if (methodModel.getParameterTypes() != null && methodModel.getParameterTypes().size() > 0) {
                 for (int i = 0; i < methodModel.getParameterTypes().size(); i++) {
                     methodSpec.addParameter(methodModel.getParameterTypes().get(i).typeName, "arg" + i);
@@ -142,15 +119,17 @@ public class GenerateSystemCode {
                 methodSpec.addException(exception.typeName);
             }
             methodSpec.beginControlFlow("try")
-                    .beginControlFlow("if($N == null)", methodModel.getName())
-                    .addStatement(getMethodCode.toString(), methodModel.getName(), methodModel.getName())
-                    .addStatement("$N.setAccessible(true)", methodModel.getName())
+                    .addStatement("$T method = $T.getMethod($T.class,$S)", Method.class, REF_IMPL_FACTORY, model.getInterfaceName().typeName, methodModel.getName())
+                    .beginControlFlow("if(method == null)")
+                    .addStatement(getMethodCode.toString(), methodModel.getName())
+                    .addStatement("method.setAccessible(true)")
+                    .addStatement("$T.putMethod($T.class,$S,method)", REF_IMPL_FACTORY, model.getInterfaceName().typeName, methodModel.getName())
                     .endControlFlow();
 
             if (methodModel.isVoid()) {
-                methodSpec.addStatement(invokeCode.toString(), methodModel.getName());
+                methodSpec.addStatement(invokeCode.toString());
             } else {
-                methodSpec.addStatement("return ($T)$N.invoke(mObject)", methodModel.getReturnType().typeName, methodModel.getName());
+                methodSpec.addStatement("return ($T)" + invokeCode.toString(), methodModel.getReturnType().typeName);
             }
             methodSpec.endControlFlow()
                     .beginControlFlow("catch (Exception e)");
