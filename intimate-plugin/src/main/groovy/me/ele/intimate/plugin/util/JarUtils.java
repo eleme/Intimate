@@ -1,4 +1,4 @@
-package me.ele.intimate.plugin;
+package me.ele.intimate.plugin.util;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
