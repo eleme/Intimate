@@ -4,6 +4,8 @@ import javassist.CtClass
 import javassist.CtMethod
 import me.ele.intimate.plugin.process.GenerateUtils
 import me.ele.intimate.plugin.process.TargetDispark
+import me.ele.intimate.plugin.util.JarUtils
+import me.ele.intimate.plugin.util.Log
 import org.apache.commons.io.FileUtils
 
 class JarInject {
@@ -58,10 +60,10 @@ class JarInject {
         }
 
         if (DataSource.refFactoryShellName == className) {
-            println("processFactory:" + className)
+            Log.d("processFactory:" + className)
             processFactory(c)
         } else {
-            println("processTarget:" + c.name)
+            Log.d("processTarget:" + c.name)
             TargetDispark.processClass(c)
         }
 

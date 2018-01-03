@@ -5,6 +5,7 @@ import com.android.build.gradle.internal.pipeline.TransformManager
 import groovy.json.JsonSlurper
 import javassist.ClassPool
 import javassist.CtClass
+import me.ele.intimate.plugin.util.Log
 import org.apache.commons.io.FileUtils
 import org.gradle.api.Project
 
@@ -110,7 +111,7 @@ class IntimateTransform extends Transform {
                             }
                         }
                     }
-                    println("DataSource.todoList:" + DataSource.todoList)
+                    Log.d("DataSource.todoList:" + DataSource.todoList)
                 }
             }
         }

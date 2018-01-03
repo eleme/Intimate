@@ -6,6 +6,7 @@ import javassist.CtField
 import javassist.CtMethod
 import me.ele.intimate.plugin.process.GenerateUtils
 import me.ele.intimate.plugin.process.TargetDispark
+import me.ele.intimate.plugin.util.Log
 
 /**
  * Created by lizhaoxuan on 2017/12/25.
@@ -43,10 +44,10 @@ class ClassInject {
         }
 
         if (className.contains("\$\$Intimate")) {
-            println("processImpl:" + className)
+            Log.d("processImpl:" + className)
             processImpl(c)
         } else {
-            println("processTarget:" + className)
+            Log.d("processTarget:" + className)
             TargetDispark.processClass(c)
         }
 
