@@ -2,17 +2,19 @@
 
 Intimate 提供了友好的 API 让 java 反射的使用更加简单平滑。
 
-其最核心的价值在于 Intimate 将在编译期对 apk 内部代码（您编写的 app 代码或引入的第三方库）的调用进行反射优化，使得反射查找与调用就像普通调用一样快捷且无任何代价。
+其最核心的价值在于 Intimate 将在编译期对 apk 内部代码（您编写的 app 代码或引入的第三方库）的调用进行反射优化，完全免除反射的效率问题，使得反射调用就像普通调用一样快捷且无任何代价。
 
 *‘Apk内部代码包含您编写的 app 应用层代码以及引入的第三方库（含Android support）代码。’*
 
 ## 开始使用
 
+(细节调整中...)
+
 在根目录的 `build.gradle` 添加：
 
 ```
 dependencies{
-    classpath 'me.ele:intimate-plugin:0.0.1'
+    classpath 'me.ele:intimate-plugin:xxx'
 }
 ```
 
@@ -22,8 +24,8 @@ dependencies{
 apply plugin: 'me.ele.intimate-plugin'
 
 dependencies {
-	compile 'me.ele:intimate:0.0.1'
-    annotationProcessor 'me.ele:intimate-compiler:0.0.1'
+	compile 'me.ele:intimate:xxx'
+    annotationProcessor 'me.ele:intimate-compiler:xxx'
 }
 ```
 
@@ -77,12 +79,12 @@ User user = new User("暴打小女孩", "男", 19, "三年二班");
 RefUser refUser = RefImplFactory.getRefImpl(user, RefUser.class);
 if(refUser != null){
 	assertEquals(refUser.getName(), "暴打小女孩");
-    refUser.setName("kaka");
+	refUser.setName("kaka");
     assertEquals(refUser.getName(), "kaka");
 
 	assertEquals(refUser.getAge(), 19);
-    refUser.setAge(19,1);
-    assertEquals(refUser.getAge(), 20);
+	refUser.setAge(19,1);
+	assertEquals(refUser.getAge(), 20);
 }
 ```
 
@@ -106,14 +108,14 @@ public @interface RefTargetForName {
 }
 ```
 
-`@RefTarget` `@RefTargetForName` 对描述期望反射的目标类。
+`@RefTarget` `@RefTargetForName` 描述期望反射的目标类。
 
 `RefTarget.clazz` 属性传入期望反射的目标类的 Class ，当你期望反射的目标类是某个不对外暴露的私有类或内部类，无法取得 Class对象时，可以使用`RefTargetForName.className`通过目标类的字符串类名进行描述。
 
 Intimate可以对apk内部代码（您编写的app代码或引入的第三方库）的调用进行反射优化，使得反射调用就像普通调用一样快捷且无任何代价，对固化在ROM中的系统类则依然只能通过常规反射进行调用。
 
 所以，对于第三方库的反射，`optimizationRef` 值应该为 true，Intimate 将对其进行优化。
-Android 系统类以及 java 核心库等 System 类 `optimizationRef` 值应该为 false
+Android 系统类以及 java 核心库等 System 类 `optimizationRef` 值应为 false
 
 示例：
 
@@ -229,7 +231,8 @@ int calculateAge(int year,int month);
     Object getListenerInfo() throws IllegalAccessException, NoSuchFieldException;
     
 ```
-在调用`getListenerInfo()`时，如果遇到这两个异常将会抛出，catch其余异常。
+在调用`getListenerInfo()`时，如果遇到这两个异常将会抛出，Intimate catch其余异常。
+
 
 #### 特殊示例
 
