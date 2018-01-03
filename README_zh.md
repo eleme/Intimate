@@ -110,7 +110,7 @@ public @interface RefTargetForName {
 
 `@RefTarget` `@RefTargetForName` 描述期望反射的目标类。
 
-`RefTarget.clazz` 属性传入期望反射的目标类的 Class ，当你期望反射的目标类是某个不对外暴露的私有类或内部类，无法取得 Class对象时，可以使用`RefTargetForName.className`通过目标类的字符串类名进行描述。
+`@RefTarget（clazz=XXX.class)` 属性传入期望反射的目标类的 Class ，当你期望反射的目标类是某个不对外暴露的私有类或内部类，无法取得 Class对象时，可以使用`@RefTargetForName(className="xxx.xxx.xx")`通过目标类的字符串类名进行描述。
 
 Intimate可以对apk内部代码（您编写的app代码或引入的第三方库）的调用进行反射优化，使得反射调用就像普通调用一样快捷且无任何代价，对固化在ROM中的系统类则依然只能通过常规反射进行调用。
 
@@ -143,7 +143,7 @@ public interface RefListenerInfo {
 
 **应尽可能的使用`optimizationRef = true`，以避免不必要的反射查找耗时，但当System 类使用`optimizationRef = true`时，将构建失败。**
 
-**应尽可能的使用`RefTarget.clazz = XXX.class`** ,因为`RefTargetForName.className = "xxx.xx.xxx.class"` 属性将使用 `Class.forName("xxx.xx.xxx.class")`实现 Class的获取，你应该避免这样的操作。
+**应尽可能的使用`@RefTarget(clazz = XXX.class）`** ,因为`@RefTargetForName(className = "xxx.xx.xxx.class"）` 属性将使用 `Class.forName("xxx.xx.xxx.class")`实现 Class的获取，你应该避免这样的操作。
 
 
 #### @GetField  @SetField
@@ -231,8 +231,49 @@ int calculateAge(int year,int month);
     Object getListenerInfo() throws IllegalAccessException, NoSuchFieldException;
     
 ```
-在调用`getListenerInfo()`时，如果遇到这两个异常将会抛出，Intimate catch其余异常。
+在调用`getListenerInfo()`时，已申明的异常类型将会向上抛出，Intimate catch其余异常。
 
+#### 创建实例
+
+你可以通过`RefImplFactory`的`getRefImpl`方法创建反射描述接口的实例：
+
+```
+
+public class RefImplFactory {
+	public static <T> T getRefImpl(Object object, Class clazz){...}
+}
+
+```
+
+```
+RefTextView refTextView = RefImplFactory.getRefImpl(textView, RefTextView.class);
+
+```
+
+#### 缓存回收
+
+当`@RefTarget(optimizationRef = false)` 或`@RefTargetForName(optimizationRef = false)`时，Intimate 将会对 Field 和 Method 的实例做缓存，以使得同一目标类的多次操作仅需一次 Field 和 Method 的反射查找。
+
+如果你确定后续将不会继续对某个目标类进行反射操作，可以通过下面的方法清空缓存，方法参数为反射描述接口的Class对象：
+
+```
+public class RefImplFactory {
+	public static void clearAccess(Class refClazz){...}
+    
+    public static void clearAllAccess(){...}
+}
+
+```
+
+```
+RefImplFactory.clearAccess(RefTextView.class);
+
+or 
+
+RefImplFactory.clearAllAccess()；
+```
+
+当`@RefTarget(optimizationRef = false)` 或`@RefTargetForName(optimizationRef = false)`时，无缓存，无需回收。
 
 #### 特殊示例
 
@@ -279,12 +320,17 @@ RefListenerInfo refListenerInfo = RefImplFactory.getRefImpl(refTextView.getListe
 View.OnClickListener listener = refListenerInfo.getListener();
 ```
 
+## ProGuard
+
+你应该确保你要反射的目标类不会被混淆，否则Intimate将无法找到目标类及其属性
+
 ## Tips:
 
 - 内部类应该命名为 package.outer_class$inner_class
-- 应尽可能的使用`optimizationRef = true`，但当系统类修饰`optimizationRef = true`时将构建失败，合理识别目标类的类型
+- 在`@RefTarget` 或`@RefTargetForName`中，应尽可能的使用`optimizationRef = true`。但当系统类修饰`optimizationRef = true`时将构建失败，合理识别目标类的类型
 - 当某个属性的类型是内部类或私有类时，你可以用Object来修饰返回值或参数
 - 对于某些内部类或私有类，可以通过多个Ref接口结合使用
+- 当`@RefTarget(optimizationRef = true)` 或`@RefTargetForName(optimizationRef = true)`时，无缓存，无需回收。
 - 其他使用示例可以在Test case中查看：[app/src/androidTest/](https://github.com/ELELogistics/Intimate/tree/master/app/src/androidTest/java/me/ele/example)
 
 ## License
