@@ -24,7 +24,7 @@ dependencies{
 apply plugin: 'me.ele.intimate-plugin'
 
 dependencies {
-	compile 'me.ele:intimate:xxx'
+    compile 'me.ele:intimate:xxx'
     annotationProcessor 'me.ele:intimate-compiler:xxx'
 }
 ```
@@ -70,6 +70,7 @@ public interface RefUser {
 
     @Method
     void setAge(int a, int b);
+    
 }
 ```
 使用 RefImplFactory 创建 RefUser 实例，之后便可以通过接口 RefUser 实现对某个对象任意属性或方法的访问
@@ -78,19 +79,21 @@ public interface RefUser {
 User user = new User("暴打小女孩", "男", 19, "三年二班");
 RefUser refUser = RefImplFactory.getRefImpl(user, RefUser.class);
 if(refUser != null){
-	assertEquals(refUser.getName(), "暴打小女孩");
-	refUser.setName("kaka");
+
+    assertEquals(refUser.getName(), "暴打小女孩");
+    refUser.setName("kaka");
     assertEquals(refUser.getName(), "kaka");
 
-	assertEquals(refUser.getAge(), 19);
-	refUser.setAge(19,1);
-	assertEquals(refUser.getAge(), 20);
+    assertEquals(refUser.getAge(), 19);
+    refUser.setAge(19,1);
+    assertEquals(refUser.getAge(), 20);
+    
 }
 ```
 
 ## API
 
-#### @RefTarget @RefTargetForName
+#### @RefTarget    @RefTargetForName
 
 ```
 public @interface RefTarget {
@@ -145,16 +148,20 @@ public interface RefListenerInfo {
 
 **应尽可能的使用`@RefTarget(clazz = XXX.class）`** ,因为`@RefTargetForName(className = "xxx.xx.xxx.class"）` 属性将使用 `Class.forName("xxx.xx.xxx.class")`实现 Class的获取，你应该避免这样的操作。
 
-
-#### @GetField  @SetField
+ 
+#### @GetField    @SetField
 
 ```
 public @interface GetField {
+
     String value();
+    
 }
 
 public @interface SetField {
+
     String value();
+    
 }
 
 ```
@@ -194,9 +201,9 @@ Intimate 将匹配目标类中与`@Method`修饰的方法完全一样（返回�
 下面将给出正确与错误的示例。
 目标类：
 ```
-class User{
-	int calculateAge(int year){
-    	return 2018-year;
+class User {
+    int calculateAge(int year) {
+        return 2018 - year;
     }
 }
 
@@ -228,7 +235,7 @@ int calculateAge(int year,int month);
 
 ```
 @GetField("mListenerInfo")
-    Object getListenerInfo() throws IllegalAccessException, NoSuchFieldException;
+Object getListenerInfo() throws IllegalAccessException, NoSuchFieldException;
     
 ```
 在调用`getListenerInfo()`时，已申明的异常类型将会向上抛出，Intimate catch其余异常。
@@ -240,7 +247,7 @@ int calculateAge(int year,int month);
 ```
 
 public class RefImplFactory {
-	public static <T> T getRefImpl(Object object, Class clazz){...}
+    public static <T> T getRefImpl(Object object, Class clazz){...}
 }
 
 ```
@@ -258,7 +265,8 @@ RefTextView refTextView = RefImplFactory.getRefImpl(textView, RefTextView.class)
 
 ```
 public class RefImplFactory {
-	public static void clearAccess(Class refClazz){...}
+
+    public static void clearAccess(Class refClazz){...}
     
     public static void clearAllAccess(){...}
 }
@@ -298,14 +306,18 @@ class View {
 ```
 @RefTarget(clazz = TextView.class, optimizationRef = false)
 public interface RefTextView {
+
     @GetField("mListenerInfo")
     Object getListenerInfo() throws IllegalAccessException, NoSuchFieldException;
+    
 }
 
 @RefTargetForName(className = "android.view.View$ListenerInfo", optimizationRef = false)
 public interface RefListenerInfo {
+
     @GetField("mOnClickListener")
     View.OnClickListener getListener();
+    
 }
 ```
 
