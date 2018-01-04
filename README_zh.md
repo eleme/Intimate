@@ -344,6 +344,7 @@ View.OnClickListener listener = refListenerInfo.getListener();
 - 对于某些内部类或私有类，可以通过多个Ref接口结合使用
 - 当`@RefTarget(optimizationRef = true)` 或`@RefTargetForName(optimizationRef = true)`时，无缓存，无需回收。
 - 其他使用示例可以在Test case中查看：[app/src/androidTest/](https://github.com/ELELogistics/Intimate/tree/master/app/src/androidTest/java/me/ele/example)
+- **如果Aspectjx先执行，Intimate可能会失效**
 
 ## License
 
