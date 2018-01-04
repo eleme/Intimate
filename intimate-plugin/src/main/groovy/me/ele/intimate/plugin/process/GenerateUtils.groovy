@@ -13,7 +13,7 @@ class GenerateUtils {
     static String generateCreateRefImplCode(implMap) {
         StringBuilder builder = new StringBuilder()
         implMap.each { key, value ->
-            builder.append("if(\$2.equals(\"").append(key).append("\")){ ")
+            builder.append("if(\$2 == ").append(key).append(".class){ ")
                     .append("return new ").append(value).append("(\$1);} \n")
         }
         return builder.toString()

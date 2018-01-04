@@ -1,8 +1,8 @@
 apply plugin: 'com.android.library'
-apply plugin: 'com.novoda.bintray-release'
 
 android {
     compileSdkVersion 23
+    buildToolsVersion '25.0.3'
 
     defaultConfig {
         minSdkVersion 14
@@ -27,19 +27,15 @@ android {
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
 
-    compile 'com.android.support:appcompat-v7:23.4.0'
-    testCompile 'junit:junit:4.12'
-    androidTestCompile 'com.android.support.test:runner:1.0.1'
-    androidTestCompile 'com.android.support.test.espresso:espresso-core:3.0.1'
-
-    compile project(path: ':intimate-annotation')
+    compile 'me.ele:intimate-annotation:0.0.1'
 }
 
+apply plugin: 'com.novoda.bintray-release'
 publish {
     userOrg = 'zhaoxuan' // 用户所在组织
     groupId = 'me.ele' // 包名
     artifactId = 'intimate' // library的名字
-    publishVersion = '0.0.1' // 版本
+    publishVersion = '0.0.7' // 版本
     desc = 'Intimate提供友好的API让反射的使用更简单平滑，同时完全免除Apk内部代码(应用代码、第三方库)的反射耗时' // library描述
     website = 'https://github.com/ELELogistics/Intimate'
 }

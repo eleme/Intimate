@@ -1,5 +1,4 @@
 apply plugin: 'java-library'
-apply plugin: 'com.novoda.bintray-release'
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
@@ -7,17 +6,18 @@ dependencies {
     compile 'com.squareup:javapoet:1.9.0'
     compile 'com.google.auto.service:auto-service:1.0-rc2'
     compile 'com.google.code.gson:gson:2.8.2'
-    compile project(path: ':intimate-annotation')
+    compile 'me.ele:intimate-annotation:0.0.1'
 }
 
 sourceCompatibility = "1.7"
 targetCompatibility = "1.7"
 
+apply plugin: 'com.novoda.bintray-release'
 publish {
     userOrg = 'zhaoxuan' // 用户所在组织
     groupId = 'me.ele' // 包名
     artifactId = 'intimate-compiler' // library的名字
-    publishVersion = '0.0.1' // 版本
+    publishVersion = '0.0.7' // 版本
     desc = 'Intimate-compiler' // library描述
     website = 'https://github.com/ELELogistics/Intimate'
 }

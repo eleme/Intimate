@@ -2,18 +2,19 @@ apply plugin: 'com.android.application'
 apply plugin: 'intimate-plugin'
 
 android {
-    compileSdkVersion 23
+    compileSdkVersion 26
+    buildToolsVersion '25.0.3'
     defaultConfig {
         applicationId "me.ele.example"
         minSdkVersion 15
-        targetSdkVersion 23
+        targetSdkVersion 26
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
         release {
-            minifyEnabled false
+            minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
@@ -21,6 +22,9 @@ android {
         resolutionStrategy {
             force 'com.android.support:support-annotations:24.2.1'
         }
+    }
+    lintOptions {
+        abortOnError false
     }
 }
 
@@ -36,6 +40,8 @@ dependencies {
     compile project(path: ':mock-lib')
 
     compile 'com.google.code.gson:gson:2.8.2'
-    compile project(path: ':intimate-lib')
-    annotationProcessor project(path: ':intimate-compiler')
+    compile 'me.ele:intimate:0.0.7'
+    annotationProcessor 'me.ele:intimate-compiler:0.0.7'
+//    compile project(path: ':intimate-lib')
+//    annotationProcessor project(path: ':intimate-compiler')
 }

@@ -14,11 +14,6 @@ public class RefImplFactory {
     private static Map<Class, Map<String, Method>> methodMap;
 
     public static <T> T getRefImpl(Object object, Class clazz) {
-        String name = clazz.getCanonicalName();
-        return createRefImpl(object, name);
-    }
-
-    private static <T> T createRefImpl(Object object, String name) {
         //Compile time generate code
         return null;
     }

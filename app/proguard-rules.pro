@@ -19,3 +19,6 @@
 # If you keep the line number information, uncomment this to
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
+-keep public class * extends android.app.Activity
+-keep class me.ele.example.mock.**{ *; }
+-keep class me.ele.example.lib.User

@@ -75,7 +75,7 @@ class JarInject {
         if (DataSource.implMap.size() == 0) {
             return
         }
-        CtMethod ctMethods = c.getDeclaredMethod("createRefImpl")
+        CtMethod ctMethods = c.getDeclaredMethod("getRefImpl")
         String code = GenerateUtils.generateCreateRefImplCode(DataSource.implMap)
         ctMethods.insertBefore(code)
     }
