@@ -11,11 +11,13 @@ import javassist.CtMethod;
 class GenerateUtils {
 
     static String generateCreateRefImplCode(implMap) {
-        StringBuilder builder = new StringBuilder()
+        StringBuilder builder = new StringBuilder("{")
         implMap.each { key, value ->
             builder.append("if(\$2 == ").append(key).append(".class){ ")
                     .append("return new ").append(value).append("(\$1);} \n")
         }
+        builder.append("return null;")
+        builder.append("}")
         return builder.toString()
     }
 

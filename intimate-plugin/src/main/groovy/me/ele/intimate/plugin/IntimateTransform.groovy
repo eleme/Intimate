@@ -49,8 +49,7 @@ class IntimateTransform extends Transform {
     void transform(TransformInvocation transformInvocation) throws TransformException, InterruptedException, IOException {
         Collection<TransformInput> inputs = transformInvocation.getInputs()
         TransformOutputProvider outputProvider = transformInvocation.getOutputProvider()
-
-
+        Log.d("Intimate start")
         readIntimateConfig(inputs)
         pool.appendClassPath(project.android.bootClasspath[0].toString())
         inputs.each { TransformInput input ->
@@ -80,6 +79,7 @@ class IntimateTransform extends Transform {
             }
         }
         jarClassList.clear()
+        Log.d("Intimate Done")
     }
 
     private static void readIntimateConfig(Collection<TransformInput> inputs) {
@@ -120,6 +120,7 @@ class IntimateTransform extends Transform {
     private
     static void processClassFile(DirectoryInput directoryInput, TransformOutputProvider outputProvider) {
         int packageIndex = directoryInput.file.absolutePath.toString().length() + 1
+
         ClassInject.injectDir(directoryInput.file.absolutePath, packageIndex)
 
         def dest = outputProvider.getContentLocation(directoryInput.name,
@@ -133,7 +134,6 @@ class IntimateTransform extends Transform {
         String jarPath = jarInput.file.absolutePath
         File jar = JarInject.injectJar(jarPath)
 
-        // 重命名输出文件（同目录copyFile会冲突）
         def jarName = jarInput.name
         if (jarName.endsWith(".jar")) {
             jarName = jarName.substring(0, jarName.length() - 4)

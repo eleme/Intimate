@@ -6,6 +6,7 @@ import javassist.CtMethod
 import javassist.bytecode.AccessFlag
 import me.ele.intimate.plugin.DataSource
 import me.ele.intimate.plugin.ThrowExecutionError
+import me.ele.intimate.plugin.util.Log
 
 /**
  * Created by lizhaoxuan on 2017/12/28.
@@ -35,6 +36,7 @@ class TargetDispark {
         }
         processTargetField(c, intimateFieldList, intimateObjectFieldList)
         processTargetMethod(c, intimateMethodList)
+        Log._d(" done")
     }
 
     private static void processTargetField(CtClass c, intimateFieldList, intimateObjectFieldList) {

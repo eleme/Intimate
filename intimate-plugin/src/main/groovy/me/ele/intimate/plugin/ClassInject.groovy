@@ -44,10 +44,10 @@ class ClassInject {
         }
 
         if (className.contains("\$\$Intimate")) {
-            Log.d("processImpl:" + className)
+            Log.d_("processImpl:" + c.name + "ing...")
             processImpl(c)
         } else {
-            Log.d("processTarget:" + className)
+            Log.d_("processTarget:" + c.name + "ing...")
             TargetDispark.processClass(c)
         }
 
@@ -84,6 +84,7 @@ class ClassInject {
                 method.setBody(code)
             }
         }
+        Log._d(" done")
     }
 
     private static void processInnerClass(CtClass c, value) {
