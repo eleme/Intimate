@@ -2,18 +2,25 @@ package me.ele.example;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.RecyclerView;
+import android.util.Log;
+import android.view.View;
 import android.widget.TextView;
 
-import me.ele.example.mock.CarPrivate;
-import me.ele.example.ref.RefCarPrivate;
+import com.google.gson.Gson;
+
+import me.ele.example.lib.User;
+import me.ele.example.ref.RefGson;
+import me.ele.example.ref.RefListenerInfo;
+import me.ele.example.ref.RefRecyclerView;
+import me.ele.example.ref.RefTextView;
+import me.ele.example.ref.RefUser;
 import me.ele.intimate.RefImplFactory;
 
-import static junit.framework.Assert.assertEquals;
-
 public class MainActivity extends AppCompatActivity {
+    private static final String TAG = "Intimate";
 
     private TextView textView;
-    int type = 2;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -21,65 +28,52 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         textView = (TextView) findViewById(R.id.text);
 
-//        RefTextView refTextView = RefImplFactory.getRefImpl(textView, RefTextView.class);
-//        refTextView.getText();
-//        Log.d("TAG", refTextView.getText().toString());
-//        Log.d("TAG", refTextView.getDesiredHeight() + " ");
-//
-//        int type = 1000;
-//
-//        User user = new User("kaka", "男", 19, "三年二班");
-//
-//        RefUser refUser = RefImplFactory.getRefImpl(user, RefUser.class);
-//        Log.d("TAG", "getName:" + refUser.getName());
-//        Log.d("TAG", "getSexStr: " + refUser.getSexStr());
-//        refUser.setSexRef("你猜猜ss");
-//        Log.d("TAG", "getSex：" + refUser.getSex());
-//        refUser.setAge(1, 2);
-//        Log.d("TAG", "getAge: " + refUser.getAge());
-//        Log.d("TAG", "getAgeStr: " + refUser.getAgeStr());
-//        Log.d("TAG", "getClassName: " + refUser.getClassName());
-//
-//
-//        RefGson refGson = RefImplFactory.getRefImpl(new Gson(), RefGson.class);
-//        Log.d("TAG", "getDefaultLenient:" + refGson.getDefaultLenient());
-//        Log.d("TAG", "getDefaultPrettyPrint:" + refGson.getDefaultPrettyPrint());
-//        new CarPrivate();
-//        RefCarPrivate carPrivate = RefImplFactory.getRefImpl(new CarPrivate(), RefCarPrivate.class);
-//        Log.d("TAG", "carPrivate:" + carPrivate.getNameField());
-//
-//        RecyclerView recyclerView = new RecyclerView(this);
-//        RefRecyclerView refRecyclerView = RefImplFactory.getRefImpl(recyclerView, RefRecyclerView.class);
-//        Log.d("TAG", "recyclerView:" + refRecyclerView.getLastTouchY());
-//        refRecyclerView.setLastTouchY(11);
-//        Log.d("TAG", "recyclerView:" + refRecyclerView.getLastTouchY());
+        //系统类
+        RefTextView refTextView = RefImplFactory.getRefImpl(textView, RefTextView.class);
+        refTextView.getText();
+        Log.d(TAG, "TextView text:" + refTextView.getText().toString());
+        Log.d(TAG, "TextView getDesiredHeight:" + refTextView.getDesiredHeight());
 
-        testStaticInnerClass();
-    }
+        //获取内部类以及异常处理
+        View.OnClickListener listener = new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.d("TAG", "listener");
+            }
+        };
+        textView.setOnClickListener(listener);
+        try {
+            RefListenerInfo refListenerInfo = RefImplFactory.getRefImpl(refTextView.getListenerInfo(), RefListenerInfo.class);
+            if (listener == refListenerInfo.getListener()) {
+                Log.d(TAG, "OnClickListener getListener success");
+            }
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        } catch (NoSuchFieldException e) {
+            e.printStackTrace();
+        }
 
-    private void testStaticInnerClass() {
-        CarPrivate car1 = new CarPrivate();
-        CarPrivate car2 = new CarPrivate();
+        //普通类
+        User user = new User("kaka", "男", 19, "三年二班");
+        RefUser refUser = RefImplFactory.getRefImpl(user, RefUser.class);
+        Log.d(TAG, "User getName:" + refUser.getName());
+        Log.d(TAG, "User getSexStr: " + refUser.getSexStr());
+        refUser.setSexRef("你猜猜ss");
+        Log.d(TAG, "User getSex：" + refUser.getSex());
+        refUser.setAge(1, 2);
+        Log.d(TAG, "User getAge: " + refUser.getAge());
 
-        RefCarPrivate carPrivate1 = RefImplFactory.getRefImpl(car1, RefCarPrivate.class);
+        //第三方库-常量
+        RefGson refGson = RefImplFactory.getRefImpl(new Gson(), RefGson.class);
+        Log.d(TAG, "Gson getDefaultLenient:" + refGson.getDefaultLenient());
+        Log.d(TAG, "Gson getDefaultPrettyPrint:" + refGson.getDefaultPrettyPrint());
 
-        assertEquals(carPrivate1.getNameField(), "my Private car");
-        carPrivate1.setNameField("car1");
-        assertEquals(carPrivate1.getNameField(), "car1");
-
-        assertEquals(carPrivate1.getLevel(), 7);
-        carPrivate1.setLevel(12);
-        assertEquals(carPrivate1.getLevel(), 12);
-
-        RefCarPrivate carPrivate2 = RefImplFactory.getRefImpl(car2, RefCarPrivate.class);
-
-        assertEquals(carPrivate2.getNameField(), "my Private car");
-        carPrivate2.setNameField("car2");
-        assertEquals(carPrivate2.getNameField(), "car2");
-
-        assertEquals(carPrivate2.getLevel(), 7);
-        carPrivate2.setLevel(99);
-        assertEquals(carPrivate2.getLevel(), 99);
+        //第三方库-android.support
+        RecyclerView recyclerView = new RecyclerView(this);
+        RefRecyclerView refRecyclerView = RefImplFactory.getRefImpl(recyclerView, RefRecyclerView.class);
+        Log.d(TAG, "recyclerView:" + refRecyclerView.getLastTouchY());
+        refRecyclerView.setLastTouchY(11);
+        Log.d(TAG, "recyclerView:" + refRecyclerView.getLastTouchY());
     }
 
 }
