@@ -17,20 +17,15 @@ class JarInject {
     static File injectJar(path) throws Exception {
         if (path.endsWith(".jar")) {
             File jarFile = new File(path)
-            // jar包解压后的保存路径
             String jarZipDir = jarFile.getParent() + "/" + jarFile.getName().replace('.jar', '')
             File unJar = new File(jarZipDir)
-            // 解压jar包, 返回jar包中所有class的完整类名的集合（带.class后缀）
             List classNameList = JarUtils.unJar(jarFile, unJar)
 
             try {
                 boolean haveTarget = traverseClassList(classNameList, jarZipDir)
                 if (haveTarget) {
-                    // 删除原来的jar包
                     jarFile.delete()
-                    // 从新打包jar
                     JarUtils.jar(jarFile, unJar)
-                    // 删除目录
                     FileUtils.deleteDirectory(new File(jarZipDir))
                     IntimateTransform.pool.appendClassPath(path)
                     return new File(path)
@@ -38,7 +33,6 @@ class JarInject {
                     return null
                 }
             } catch (Exception e) {
-                // 删除目录
                 FileUtils.deleteDirectory(new File(jarZipDir))
                 throw e
             }

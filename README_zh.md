@@ -8,13 +8,12 @@ Intimate 提供了友好的 API 让 java 反射的使用更加简单平滑。
 
 ## 开始使用
 
-(细节调整中...)
 
 在根目录的 `build.gradle` 添加：
 
 ```
 dependencies{
-    classpath 'me.ele:intimate-plugin:xxx'
+    classpath 'me.ele:intimate-plugin:1.0.0'
 }
 ```
 
@@ -24,8 +23,8 @@ dependencies{
 apply plugin: 'me.ele.intimate-plugin'
 
 dependencies {
-    compile 'me.ele:intimate:xxx'
-    annotationProcessor 'me.ele:intimate-compiler:xxx'
+    compile 'me.ele:intimate:1.0.0'
+    annotationProcessor 'me.ele:intimate-compiler:1.0.0'
 }
 ```
 
@@ -111,7 +110,7 @@ public @interface RefTargetForName {
 }
 ```
 
-`@RefTarget` `@RefTargetForName` 描述期望反射的目标类。
+`@RefTarget` `@RefTargetForName` 描述期望反射的目标类。我称这个接口为 `RefInterface`
 
 `@RefTarget（clazz=XXX.class)` 属性传入期望反射的目标类的 Class ，当你期望反射的目标类是某个不对外暴露的私有类或内部类，无法取得 Class对象时，可以使用`@RefTargetForName(className="xxx.xxx.xx")`通过目标类的字符串类名进行描述。
 
@@ -261,7 +260,7 @@ RefTextView refTextView = RefImplFactory.getRefImpl(textView, RefTextView.class)
 
 当`@RefTarget(optimizationRef = false)` 或`@RefTargetForName(optimizationRef = false)`时，Intimate 将会对 Field 和 Method 的实例做缓存，以使得同一目标类的多次操作仅需一次 Field 和 Method 的反射查找。
 
-如果你确定后续将不会继续对某个目标类进行反射操作，可以通过下面的方法清空缓存，方法参数为反射描述接口的Class对象：
+如果你确定后续将不会继续对某个目标类进行反射操作，可以通过下面的方法清空缓存，方法参数`RefInterface`的Class对象：
 
 ```
 public class RefImplFactory {
@@ -301,7 +300,7 @@ class View {
 }
 
 ```
-当你期望反射得到 `OnClickListener mOnClickListener`时，一个描述接口可能并不能实现你的需求，此时你需要两个。
+当你期望反射得到 `OnClickListener mOnClickListener`时，一个`RefInterface`可能并不能实现你的需求，此时你需要两个。
 
 ```
 @RefTarget(clazz = TextView.class, optimizationRef = false)
@@ -341,8 +340,7 @@ View.OnClickListener listener = refListenerInfo.getListener();
 - 内部类应该命名为 package.outer_class$inner_class
 - 在`@RefTarget` 或`@RefTargetForName`中，应尽可能的使用`optimizationRef = true`。但当系统类修饰`optimizationRef = true`时将构建失败，合理识别目标类的类型
 - 当某个属性的类型是内部类或私有类时，你可以用Object来修饰返回值或参数
-- 对于某些内部类或私有类，可以通过多个Ref接口结合使用
-- 当`@RefTarget(optimizationRef = true)` 或`@RefTargetForName(optimizationRef = true)`时，无缓存，无需回收。
+- 对于某些内部类或私有类，可以通过多个`RefInterface`结合使用
 - 其他使用示例可以在Test case中查看：[app/src/androidTest/](https://github.com/ELELogistics/Intimate/tree/master/app/src/androidTest/java/me/ele/example)
 - **如果Aspectjx先执行，Intimate可能会失效**
 

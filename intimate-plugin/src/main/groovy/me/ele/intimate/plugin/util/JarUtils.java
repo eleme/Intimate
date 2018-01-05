@@ -20,42 +20,20 @@ import java.util.zip.ZipEntry;
 
 public class JarUtils {
 
-    /**
-     * jar -cvf
-     *
-     * @param desJar
-     * @param jarDir
-     * @throws Exception
-     */
     public static void jar(File desJar, File jarDir) throws Exception {
         BufferedOutputStream out = new BufferedOutputStream(new FileOutputStream(desJar));
         File[] src = jarDir.listFiles();
         jar(out, src);
     }
 
-    /**
-     * @param out
-     * @param src
-     */
     public static void jar(OutputStream out, File[] src) throws Exception {
         jar(out, src, null, null);
     }
 
-    /**
-     * @param out
-     * @param src
-     */
     public static void jar(OutputStream out, File src) throws Exception {
         jar(out, new File[]{src}, null, null);
     }
 
-    /**
-     * @param out
-     * @param src
-     * @param prefix
-     * @param man
-     * @throws Exception
-     */
     public static void jar(OutputStream out, File[] src, String prefix, Manifest man) throws Exception {
         JarOutputStream jout = null;
         if (man == null) {
@@ -80,11 +58,6 @@ public class JarUtils {
         jout.close();
     }
 
-    /**
-     * @param src
-     * @param prefix
-     * @param jout
-     */
     private static void jar(File src, String prefix, JarOutputStream jout) throws Exception {
         if (src.isDirectory()) {
             prefix = prefix + src.getName() + "/";
@@ -116,13 +89,6 @@ public class JarUtils {
         }
     }
 
-
-    /**
-     * jar -xvf
-     *
-     * @param jarFile
-     * @param unJarDir
-     */
     public static List<String> unJar(File jarFile, File unJarDir) throws Exception {
         List<String> list = new ArrayList<>();
 

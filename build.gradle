@@ -11,7 +11,7 @@ buildscript {
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:2.3.2'
-        classpath 'me.ele:intimate-plugin:0.0.7'
+        classpath 'me.ele:intimate-plugin:1.0.0'
 //        classpath 'me.ele.plugin:intimate-plugin:1.0.0'
         classpath 'com.novoda:bintray-release:0.5.0'
 

@@ -24,10 +24,10 @@ uploadArchives {
 
 apply plugin: 'com.novoda.bintray-release'
 publish {
-    userOrg = 'zhaoxuan' // 用户所在组织
-    groupId = 'me.ele' // 包名
-    artifactId = 'intimate-plugin' // library的名字
-    publishVersion = '0.0.7' // 版本
-    desc = 'Intimate-plugin' // library描述
+    userOrg = 'zhaoxuan'
+    groupId = 'me.ele'
+    artifactId = 'intimate-plugin'
+    publishVersion = '1.0.0'
+    desc = 'Intimate-plugin'
     website = 'https://github.com/ELELogistics/Intimate'
 }

@@ -14,10 +14,10 @@ targetCompatibility = "1.7"
 
 apply plugin: 'com.novoda.bintray-release'
 publish {
-    userOrg = 'zhaoxuan' // 用户所在组织
-    groupId = 'me.ele' // 包名
-    artifactId = 'intimate-compiler' // library的名字
-    publishVersion = '0.0.7' // 版本
-    desc = 'Intimate-compiler' // library描述
+    userOrg = 'zhaoxuan'
+    groupId = 'me.ele'
+    artifactId = 'intimate-compiler'
+    publishVersion = '1.0.0'
+    desc = 'Intimate-compiler'
     website = 'https://github.com/ELELogistics/Intimate'
 }
