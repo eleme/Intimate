@@ -15,7 +15,7 @@ Firstly, add following code in root `build.gradle` of your project.
 
 ```
 dependencies{
-    classpath 'me.ele:intimate-plugin:xxx'
+    classpath 'me.ele:intimate-plugin:1.0.0'
 }
 ```
 
@@ -25,8 +25,8 @@ And then, add following code in your application module's `build.gradle`
 apply plugin: 'me.ele.intimate-plugin'
 
 dependencies {
-    compile 'me.ele:intimate:xxx'
-    annotationProcessor 'me.ele:intimate-compiler:xxx'
+    compile 'me.ele:intimate:1.0.0'
+    annotationProcessor 'me.ele:intimate-compiler:1.0.0'
 }
 ```
 
