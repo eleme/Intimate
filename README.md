@@ -1,11 +1,11 @@
 # Intimate
 
-Intimate provides a friendly API to make Java reflection easier and smoothness.
+Intimate provides a friendly API to make Java reflection easier and more smooth.
 
-It core value is, Intimate will optimize the reflection call of the `Apk Code` at compile time, completely remove reflection search time，making a reflection call is as fast as a normal call.
+Its core value is optimizing the reflection call at compile time, which completely save reflection search time，and make a reflection call as fast as a normal call.
 
 
-*' `Apk Code` is the application layer code that you wrote and the library that you introduced（contains android.support）.But the system code that solidifies in ROM, Still only through normal reflection'*
+*' Intiamte only take action on the code that you write and the library introduced（contains android.support.*）. But the system code will not be affected'*
 
 [中文 README](https://github.com/ELELogistics/Intimate/blob/master/README_zh.md)
 
@@ -53,7 +53,7 @@ public class User {
 }
 ```
 
-Use the interface to describe your need for reflection：
+Use the interface to describe what your need for reflection：
 
 ```
 @RefTarget(clazz = User.class, optimizationRef = true)
@@ -74,7 +74,7 @@ public interface RefUser {
 }
 ```
 
-Use `RefImplFactory` create `RefUser` instance，after that, you can access any field or method of an object through the `RefUser`.
+Use `RefImplFactory` to create `RefUser` instance. Then, you can access any field or method of an object through the `RefUser`.
 
 ```
 User user = new User("papapa", "man", 19, "Class 3");
@@ -112,18 +112,15 @@ public @interface RefTargetForName {
 }
 ```
 
-`@RefTarget` `@RefTargetForName` Describes the target class that is expected to reflect. I call her RefInterface.
+`@RefTarget` and `@RefTargetForName` describe the target class to be reflected. I call her `RefInterface`.
 
 `@RefTarget（clazz=XXX.class)` 
 
-'xxx.class' is your target class. when your target class is a private class or inner class ，don‘t get Class object,you can use `@RefTargetForName(className="xxx.xxx.xx")` ,'xxx.xxx.xxx' is class canonical name.
+'xxx.class' is your target class. When it is a private class or inner class，form which you can't get `Class` object, you can use `@RefTargetForName(className="xxx.xxx.xx")`, where 'xxx.xxx.xxx' is class canonical name.
 
-Intimate can optimize the reflection calls of the apk code, completely remove reflection search time. But the system code that solidifies in ROM, Still only through normal reflection.
+Intimate can optimize the reflection call at compile time, which completely save reflection search time，and make a reflection call as fast as a normal call
 
-
-so, for apk code, `optimizationRef` value should be true，Intimate will optimize it.
-
-Android system class and java.lang.* and so on , `optimizationRef` value should be false
+so, for Android system class, java.lang.* and etc., `optimizationRef` value should be false.
 
 The sample：
 
@@ -149,10 +146,10 @@ public interface RefListenerInfo {
 
 ```
 
-**You should use `optimizationRef = true` as much as possible, to avoid unnecessary reflection search. But when System class use `optimizationRef = true`, the build will fail.**
+**To avoid unnecessary reflection search, the value of optimizationRef is highly recommended to be true. But when System class use `optimizationRef = true`, the build will fail.**
 
 
-**You should use `@RefTarget(clazz = XXX.class）` as much as possible** , because `@RefTargetForName(className = "xxx.xx.xxx.class"）` will use `Class.forName("xxx.xx.xxx.class")` to implement get Class, you should avoid such an operation.
+**You should use `@RefTarget(clazz = XXX.class）` as much as possible**, because `@RefTargetForName(className = "xxx.xx.xxx.class"）` will use `Class.forName("xxx.xx.xxx.class")`, you should avoid such an operation.
 
  
 #### @GetField    @SetField
@@ -180,7 +177,7 @@ Intimate determined field type through `@GetField` annotation method's returnTyp
 
 Intimate determined field type through `@SetField` annotation method's parameterType.
 
-Special instructions: when te field type is private Class or inner class, you can use Object deed returnType or parameterType
+Special instructions: when te field type is private Class or inner class, you can convert the returnType or parameterType to Object.
 
 ```
 @GetField("name")
@@ -188,9 +185,12 @@ String getName();
 
 @SetField("age")
 void setName(int age);
+
+@SetField("user")
+void setUser(Object user);
 ```
 
-In the example above, Intimate know the target is [java.lang.String : name] and  [int : age]
+In the example above, Intimate know the target is [java.lang.String : name], [int : age] and [Object : user]
 
 #### @Method
 
@@ -200,15 +200,15 @@ public @interface Method {
 }
 ```
 
-`@Method` Describes the `method' 
+`@Method` Describes the 'method' 
 
-`value` is method name, can be the default, when the default，Intimate determined method name through `@Method` annotation method's name.
+`value` is method name which can be omitted. When it's omitted，Intimate deduces method name through `@Method` annotation.
 
-Intimate will match the target with `@Method` annotation method exactly the same method.(returnType, methodName, parameterList)
+Intimate will find the function with signature matching the one annotated by `@Method`. (with same returnType, methodName, parameterList)
 
-Special instructions: when te field type is private Class or inner class, you can use Object deed returnType or parameterType.
+Special instructions: when te field type is private Class or inner class, you can convert the returnType or parameterType to Object.
 
-Examples of right and wrong are given below.
+Both correct and wrong examples are shown as follows.
 
 Target Class：
 
@@ -241,8 +241,8 @@ int calculateAge(int year,int month);
 
 #### Exception handling
 
-Default, when `optimizationRef = false`, Intimate will catch all exception.
-when `optimizationRef = true`, if can't find field or method, build will fail.
+By default, when `optimizationRef = false`, Intimate will catch all exception.
+when `optimizationRef = true`, if can't find field or method and build will fail.
 
 when `optimizationRef = false`,you need handle some exception, you can do that:
 
@@ -251,11 +251,11 @@ when `optimizationRef = false`,you need handle some exception, you can do that:
 Object getListenerInfo() throws IllegalAccessException, NoSuchFieldException;
     
 ```
-`getListenerInfo()` will throw IllegalAccessException or NoSuchFieldException，，Intimate catch other exception。
+`getListenerInfo()` will throw IllegalAccessException or NoSuchFieldException, Intimate catch other exception.
 
 #### Create RefInterface instance
 
-you can use `RefImplFactory.getRefImpl` create RefInterface instance:
+you can use `RefImplFactory.getRefImpl` to create RefInterface instance:
 
 ```
 
@@ -270,11 +270,11 @@ RefTextView refTextView = RefImplFactory.getRefImpl(textView, RefTextView.class)
 
 ```
 
-#### Cache recovery
+#### Cache managerment
 
-When `@RefTarget(optimizationRef = false)`  or `@RefTargetForName(optimizationRef = false)`，Intimate will cache Field and Method, so the Intimat requires only one reflection search.
+When `@RefTarget(optimizationRef = false)` or `@RefTargetForName(optimizationRef = false)`，Intimate will cache Field and Method, so the Intimat requires only one reflection search.
 
-If you are certain you will not continue to reflect on a target class，can clear cache, the parameter is RefInterface class.
+If you don't need reflection on some class any more，cache could be cleaned. The parameter is RefInterface class.
 
 ```
 public class RefImplFactory {
@@ -294,7 +294,7 @@ RefImplFactory.clearAccess(RefTextView.class);
 RefImplFactory.clearAllAccess()；
 ```
 
- when `@RefTarget(optimizationRef = false)`  or `@RefTargetForName(optimizationRef = false)`，no cache，don't need to recycle.
+When `@RefTarget(optimizationRef = false)`  or `@RefTargetForName(optimizationRef = false)`, cache is disabled and you don't need to clear it.
 
 #### Special sample
 
@@ -314,7 +314,7 @@ class View {
 }
 
 ```
-When you get  `OnClickListener mOnClickListener`，A RefInterface may not fulfill your requirements,  you need two.
+When you get  `OnClickListener mOnClickListener`，Single RefInterface may not fulfill your requirements,  you need two.
 
 ```
 @RefTarget(clazz = TextView.class, optimizationRef = false)
@@ -347,17 +347,16 @@ View.OnClickListener listener = refListenerInfo.getListener();
 
 ## ProGuard
 
-You should ensure that your target class will not be ProGuard or that the target class and its attributes will not be found.
+You should ensure that your target class will not be obfuscated or that the target class and its attributes will not be found.
 
 ## Tips:
 
-- Inner classes should be named like `package.outer_class$inner_class`
-- You should use `optimizationRef = true` as much as possible, to avoid unnecessary reflection search. But when System class use `optimizationRef = true`, the build will fail.
-- When te field type is private Class or inner class, you can use Object deed returnType or parameterType.
-- Get some private class or inner class object,you can use multiple RefInterface.
-- When `@RefTarget(optimizationRef = true)`  or `@RefTargetForName(optimizationRef = true)`, no cache,don't need to recycle.
-- You can come here， learn more cases：[app/src/androidTest/](https://github.com/ELELogistics/Intimate/tree/master/app/src/androidTest/java/me/ele/example)
-- **If the Aspectjx executes first, the Intimate may be invalid**
+- Inner class should be named like `package.outer_class$inner_class`
+- To avoid unnecessary reflection search, the value of optimizationRef is highly recommended to be true. But when System class use `optimizationRef = true`, the build will fail.
+- when te field type is private Class or inner class, you can convert the returnType or parameterType to Object.
+- To get some private class or inner class object,you can use multiple RefInterface.
+- You can visit the link to learn more. [app/src/androidTest/](https://github.com/ELELogistics/Intimate/tree/master/app/src/androidTest/java/me/ele/example)
+- **If Aspectjx executes first, the Intimate may be invalid**
 
 ## License
 
@@ -372,4 +371,3 @@ distributed under the License is distributed on an "AS IS" BASIS,
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
-
