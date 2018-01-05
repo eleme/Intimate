@@ -5,11 +5,11 @@ Intimate provides a friendly API to make Java reflection easier and smoothness.
 It core value is, Intimate will optimize the reflection call of the `Apk Code` at compile time, completely remove reflection search time，making a reflection call is as fast as a normal call.
 
 
-*' `Apk Code` is the application layer code that you wrote and the library that you introduced（contains android.support）.'*
+*' `Apk Code` is the application layer code that you wrote and the library that you introduced（contains android.support）.But the system code that solidifies in ROM, Still only through normal reflection'*
 
 [中文 README](https://github.com/ELELogistics/Intimate/blob/master/README_zh.md)
 
-## 开始使用
+## Usage
 
 Firstly, add following code in root `build.gradle` of your project.
 
