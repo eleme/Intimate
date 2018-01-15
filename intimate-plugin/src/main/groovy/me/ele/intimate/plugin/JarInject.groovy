@@ -14,7 +14,7 @@ class JarInject {
      * 这里需要将jar包先解压，注入代码后再重新生成jar包
      * @path jar包的绝对路径
      */
-    static File injectJar(path) throws Exception {
+    static void injectJar(path) throws Exception {
         if (path.endsWith(".jar")) {
             File jarFile = new File(path)
             String jarZipDir = jarFile.getParent() + "/" + jarFile.getName().replace('.jar', '')
@@ -26,18 +26,13 @@ class JarInject {
                 if (haveTarget) {
                     jarFile.delete()
                     JarUtils.jar(jarFile, unJar)
-                    FileUtils.deleteDirectory(new File(jarZipDir))
-                    IntimateTransform.pool.appendClassPath(path)
-                    return new File(path)
-                } else {
-                    return null
                 }
             } catch (Exception e) {
-                FileUtils.deleteDirectory(new File(jarZipDir))
                 throw e
+            } finally {
+                FileUtils.deleteDirectory(new File(jarZipDir))
             }
         }
-        return null
     }
 
     private static boolean traverseClassList(List classNameList, String jarZipDir) {

@@ -16,7 +16,9 @@ import org.gradle.api.Project
 class IntimateTransform extends Transform {
 
     static ClassPool pool
-    static List<CtClass> jarClassList = new ArrayList<>()
+    static List<DirectoryInput> classFileList
+    static List<String> jarPathList
+    static List<CtClass> jarClassList
     Project project
 
     IntimateTransform(Project project) {
@@ -49,36 +51,36 @@ class IntimateTransform extends Transform {
     void transform(TransformInvocation transformInvocation) throws TransformException, InterruptedException, IOException {
         Collection<TransformInput> inputs = transformInvocation.getInputs()
         TransformOutputProvider outputProvider = transformInvocation.getOutputProvider()
-        Log.d("Intimate start")
+        Log.d("Intimate start v1.0.1")
         readIntimateConfig(inputs)
         pool.appendClassPath(project.android.bootClasspath[0].toString())
+
+        jarClassList = new ArrayList<>()
+        classFileList = new ArrayList<>()
+        jarPathList = new ArrayList<>()
         inputs.each { TransformInput input ->
             input.jarInputs.each { JarInput jarInput ->
                 pool.appendClassPath(jarInput.file.absolutePath)
+                copyJar(jarInput, outputProvider)
             }
 
             input.directoryInputs.each { DirectoryInput directoryInput ->
                 pool.appendClassPath(directoryInput.file.absolutePath)
+                classFileList.add(directoryInput)
             }
         }
 
-        inputs.each { TransformInput input ->
-            jarClassList = new ArrayList<>()
-            input.jarInputs.each { JarInput jarInput ->
-                processJar(jarInput, outputProvider)
-            }
-
-            input.directoryInputs.each { DirectoryInput directoryInput ->
-                processClassFile(directoryInput, outputProvider)
-            }
-        }
+        processJar()
+        processClassFile(outputProvider)
 
         for (CtClass ctClass : jarClassList) {
             if (ctClass != null) {
                 ctClass.detach()
             }
         }
+        classFileList.clear()
         jarClassList.clear()
+        jarPathList.clear()
         Log.d("Intimate Done")
     }
 
@@ -118,31 +120,33 @@ class IntimateTransform extends Transform {
     }
 
     private
-    static void processClassFile(DirectoryInput directoryInput, TransformOutputProvider outputProvider) {
-        int packageIndex = directoryInput.file.absolutePath.toString().length() + 1
+    static void processClassFile(TransformOutputProvider outputProvider) {
+        for (DirectoryInput directoryInput : classFileList) {
+            int packageIndex = directoryInput.file.absolutePath.length() + 1
 
-        ClassInject.injectDir(directoryInput.file.absolutePath, packageIndex)
+            ClassInject.injectDir(directoryInput.file.absolutePath, packageIndex)
 
-        def dest = outputProvider.getContentLocation(directoryInput.name,
-                directoryInput.contentTypes, directoryInput.scopes,
-                Format.DIRECTORY)
+            def dest = outputProvider.getContentLocation(directoryInput.name,
+                    directoryInput.contentTypes, directoryInput.scopes,
+                    Format.DIRECTORY)
 
-        FileUtils.copyDirectory(directoryInput.file, dest)
+            FileUtils.copyDirectory(directoryInput.file, dest)
+        }
     }
 
-    private static void processJar(JarInput jarInput, TransformOutputProvider outputProvider) {
-        String jarPath = jarInput.file.absolutePath
-        File jar = JarInject.injectJar(jarPath)
-
+    private static void copyJar(JarInput jarInput, TransformOutputProvider outputProvider) {
         def jarName = jarInput.name
         if (jarName.endsWith(".jar")) {
             jarName = jarName.substring(0, jarName.length() - 4)
         }
         def dest = outputProvider.getContentLocation(jarName, jarInput.contentTypes, jarInput.scopes, Format.JAR)
-        if (jar == null) {
-            FileUtils.copyFile(jarInput.file, dest)
-        } else {
-            FileUtils.copyFile(jar, dest)
+        FileUtils.copyFile(jarInput.file, dest)
+        jarPathList.add(dest.getAbsolutePath())
+    }
+
+    private static void processJar() {
+        for (String jarPath : jarPathList) {
+            JarInject.injectJar(jarPath)
         }
     }
 }
