@@ -29,19 +29,17 @@ android {
 }
 
 dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
+    compile fileTree(include: ['*.jar'], dir: 'libs')
     compile 'com.android.support:appcompat-v7:26.1.0'
     compile 'com.android.support.constraint:constraint-layout:1.0.2'
     compile 'com.android.support:recyclerview-v7:26.1.0'
-
     testCompile 'junit:junit:4.12'
     androidTestCompile 'com.android.support.test:runner:1.0.1'
-
-    compile project(path: ':mock-lib')
-
+    //    compile project(path: ':mock-lib')
     compile 'com.google.code.gson:gson:2.8.2'
     compile 'me.ele:intimate:1.0.0'
     annotationProcessor 'me.ele:intimate-compiler:1.0.0'
-//    compile project(path: ':intimate-lib')
-//    annotationProcessor project(path: ':intimate-compiler')
+    //    compile project(path: ':intimate-lib')
+    //    annotationProcessor project(path: ':intimate-compiler')
+    compile files('libs/mock-lib.jar')
 }
