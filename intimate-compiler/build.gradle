@@ -17,7 +17,7 @@ publish {
     userOrg = 'zhaoxuan'
     groupId = 'me.ele'
     artifactId = 'intimate-compiler'
-    publishVersion = '1.0.0'
+    publishVersion = '1.0.1'
     desc = 'Intimate-compiler'
     website = 'https://github.com/ELELogistics/Intimate'
 }
