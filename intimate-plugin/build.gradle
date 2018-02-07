@@ -12,7 +12,7 @@ repositories {
     mavenCentral()
 }
 group='me.ele.plugin'
-version='1.0.1'
+version='1.0.2'
 
 uploadArchives {
     repositories {
@@ -27,7 +27,7 @@ publish {
     userOrg = 'zhaoxuan'
     groupId = 'me.ele'
     artifactId = 'intimate-plugin'
-    publishVersion = '1.0.1'
+    publishVersion = '1.0.2'
     desc = 'Intimate-plugin'
     website = 'https://github.com/ELELogistics/Intimate'
 }

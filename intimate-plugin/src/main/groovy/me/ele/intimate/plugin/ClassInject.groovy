@@ -17,6 +17,7 @@ class ClassInject {
     static void injectDir(String path, packageIndex) {
         IntimateTransform.pool.appendClassPath(path)
         File dir = new File(path)
+        def pendingImplList = []
         if (dir.isDirectory()) {
             dir.eachFileRecurse { File file ->
                 String filePath = file.absolutePath
@@ -28,31 +29,45 @@ class ClassInject {
                     String className = filePath.substring(packageIndex, end)
                             .replace('/', '.').replace('/', '.')
                     // 判断是否是需要处理的类
+                    // 先处理Target,impl类缓存起来稍后处理
                     if (DataSource.todoList.contains(className)) {
-                        processClass(className, path)
+                        if (className.contains("\$\$Intimate")) {
+                            pendingImplList.add(className)
+                        } else {
+                            processTargetClass(className, path)
+                        }
                     }
                 }
             }
+            processPendingImplList(pendingImplList, path)
         }
     }
 
 
-    private static void processClass(String className, String path) {
+    private static void processTargetClass(String className, String path) {
         CtClass c = IntimateTransform.pool.getCtClass(className)
         if (c.isFrozen()) {
             c.defrost()
         }
 
-        if (className.contains("\$\$Intimate")) {
-            Log.d_("processImpl:" + c.name + "ing...")
-            processImpl(c)
-        } else {
-            Log.d_("processTarget:" + c.name + "ing...")
-            TargetDispark.processClass(c)
-        }
+        Log.d_("processTarget:" + c.name + "ing...")
+        TargetDispark.processClass(c)
 
         c.writeFile(path)
         c.detach()
+    }
+
+    private static void processPendingImplList(pendingImplList, String path) {
+        for (def className : pendingImplList) {
+            CtClass c = IntimateTransform.pool.getCtClass(className)
+            if (c.isFrozen()) {
+                c.defrost()
+            }
+            Log.d_("processImpl:" + c.name + "ing...")
+            processImpl(c)
+            c.writeFile(path)
+            c.detach()
+        }
     }
 
     private static void processImpl(CtClass c) {
