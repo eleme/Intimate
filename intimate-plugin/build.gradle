@@ -22,12 +22,12 @@ uploadArchives {
     }
 }
 
-//apply plugin: 'com.novoda.bintray-release'
-//publish {
-//    userOrg = 'zhaoxuan'
-//    groupId = 'me.ele'
-//    artifactId = 'intimate-plugin'
-//    publishVersion = '1.0.1'
-//    desc = 'Intimate-plugin'
-//    website = 'https://github.com/ELELogistics/Intimate'
-//}
+apply plugin: 'com.novoda.bintray-release'
+publish {
+    userOrg = 'zhaoxuan'
+    groupId = 'me.ele'
+    artifactId = 'intimate-plugin'
+    publishVersion = '1.0.2'
+    desc = 'Intimate-plugin'
+    website = 'https://github.com/ELELogistics/Intimate'
+}
