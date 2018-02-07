@@ -15,7 +15,7 @@ Intimate 提供了友好的 API 让 java 反射的使用更加简单平滑。
 
 ```
 dependencies{
-    classpath 'me.ele:intimate-plugin:1.0.1'
+    classpath 'me.ele:intimate-plugin:1.0.2'
 }
 ```
 
@@ -25,8 +25,8 @@ dependencies{
 apply plugin: 'intimate-plugin'
 
 dependencies {
-    compile 'me.ele:intimate:1.0.1'
-    annotationProcessor 'me.ele:intimate-compiler:1.0.1'
+    compile 'me.ele:intimate:1.0.2'
+    annotationProcessor 'me.ele:intimate-compiler:1.0.2'
 }
 ```
 
